@@ -1,0 +1,107 @@
+{
+  "election": {
+    "id": "E01",
+    "title": "การเลือกตั้งประธานชมรมโปร่งใสจริง ๆ นะ",
+    "status": "OPEN",
+    "ranking_points": [
+      3,
+      2,
+      1
+    ],
+    "duplicate_pattern_threshold": 3
+  },
+  "officers": [
+    {
+      "id": "O01",
+      "name": "กรรมการผู้ไม่เปิดโพย"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "C01",
+      "name": "Null Pointer"
+    },
+    {
+      "id": "C02",
+      "name": "Merge Conflict"
+    },
+    {
+      "id": "C03",
+      "name": "Works on My Machine"
+    },
+    {
+      "id": "C04",
+      "name": "404 Policy Not Found"
+    },
+    {
+      "id": "C05",
+      "name": "Ctrl+Z Nation"
+    }
+  ],
+  "voters": [
+    {
+      "id": "V01",
+      "name": "โพยอยู่ไหน",
+      "active": true
+    },
+    {
+      "id": "V02",
+      "name": "บังเอิญเหมือนกัน",
+      "active": true
+    },
+    {
+      "id": "V03",
+      "name": "เลือกเองจริง ๆ",
+      "active": true
+    },
+    {
+      "id": "V04",
+      "name": "ใจตรงกันเฉย ๆ",
+      "active": true
+    },
+    {
+      "id": "V05",
+      "name": "ขอดูอีกที",
+      "active": true
+    },
+    {
+      "id": "V06",
+      "name": "บัตรสุดท้าย",
+      "active": true
+    },
+    {
+      "id": "V07",
+      "name": "ไม่ได้อยู่กลุ่มไลน์",
+      "active": true
+    }
+  ],
+  "ballots": [
+    {
+      "id": "B01",
+      "voter_id": "V01",
+      "ranking": [
+        "C01",
+        "C02",
+        "C03"
+      ]
+    },
+    {
+      "id": "B02",
+      "voter_id": "V02",
+      "ranking": [
+        "C01",
+        "C02",
+        "C03"
+      ]
+    },
+    {
+      "id": "B03",
+      "voter_id": "V03",
+      "ranking": [
+        "C02",
+        "C03",
+        "C04"
+      ]
+    }
+  ]
+}

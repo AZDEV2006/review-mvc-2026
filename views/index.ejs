@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="th">
+<head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title><%= data.election.title %></title>
+</head>
+<body>
+      <h1><%= data.election.title %></h1>
+      <p>สถานะ: <strong><%= data.election.status %></strong> | บัตรทั้งหมด: <%= data.ballot_count %></p>
+      <div id="msg"></div>
+
+      <h2>ลงคะแนน</h2>
+      <form id="voteForm">
+            <label for="voterId">ผู้มีสิทธิ์</label>
+            <select id="voterId" name="voterId">
+                  <% voters.forEach((khon) => { %>
+                        <option value="<%= khon.id %>"><%= khon.id %> - <%= khon.name %></option>
+                  <% }) %>
+            </select>
+
+            <label>อันดับ 1 > 2 > 3</label>
+            <% [1, 2, 3].forEach((num) => { %>
+                  <select name="ranking">
+                        <% candidates.forEach((ca) => { %>
+                              <option value="<%= ca.id %>"><%= ca.id %> - <%= ca.name %></option>
+                        <% }) %>
+                  </select>
+            <% }) %>
+
+            <button type="submit">ลงคะแนน</button>
+      </form>
+
+      <h2>เจ้าหน้าที่</h2>
+      <form id="closeForm">
+            <select id="officerId" name="officerId">
+                  <% officers.forEach((staff) => { %>
+                        <option value="<%= staff.id %>"><%= staff.id %> - <%= staff.name %></option>
+                  <% }) %>
+            </select>
+            <button type="submit">ปิดรับคะแนน</button>
+      </form>
+
+      <h2>ผู้สมัคร</h2>
+      <table>
+            <thead>
+                  <tr><th>รหัส</th><th>ชื่อ</th><th>คะแนน</th></tr>
+            </thead>
+            <tbody>
+                  <% data.scores.forEach((ca) => { %>
+                        <tr>
+                              <td><%= ca.candidate_id %></td>
+                              <td><%= ca.name %></td>
+                              <td><%= ca.score %></td>
+                        </tr>
+                  <% }) %>
+            </tbody>
+      </table>
+
+      <h2>กลุ่มบัตร</h2>
+      <table>
+            <thead>
+                  <tr><th>Pattern</th><th>จำนวน</th><th>สถานะ</th></tr>
+            </thead>
+            <tbody>
+                  <% data.groups.forEach((gump) => { %>
+                        <tr>
+                              <td><code><%= gump.pattern_key %></code></td>
+                              <td><%= gump.ballots.length %></td>
+                              <td>
+                                    <%= gump.status %>
+                                    <% if (gump.status === "รอตรวจสอบ") { %>
+                                          <button type="button" data-group="<%= gump.pattern_key %>" data-decision="รับรอง">รับรอง</button>
+                                          <button type="button" data-group="<%= gump.pattern_key %>" data-decision="ไม่นับ">ไม่นับ</button>
+                                    <% } %>
+                              </td>
+                        </tr>
+                  <% }) %>
+            </tbody>
+      </table>
+
+      <h2>บัตร</h2>
+      <table>
+            <thead>
+                  <tr><th>บัตร</th><th>ผู้มีสิทธิ์</th><th>อันดับ</th><th>สถานะ</th></tr>
+            </thead>
+            <tbody>
+                  <% data.ballots.forEach((bai) => { %>
+                        <tr>
+                              <td><%= bai.id %></td>
+                              <td><%= bai.voter_id %></td>
+                              <td><%= bai.ranking.join(" > ") %></td>
+                              <td><%= bai.status %></td>
+                        </tr>
+                  <% }) %>
+            </tbody>
+      </table>
+      <script>
+            const msg = document.getElementById("msg");
+
+            async function sendKub(url, data) {
+                  const res = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data)
+                  });
+                  const ans = await res.json();
+                  msg.textContent = ans.message || "เรียบร้อย";
+
+                  if (ans.success) {
+                        setTimeout(() => location.reload(), 500);
+                  }
+            }
+
+            document.getElementById("voteForm").addEventListener("submit", (e) => {
+                  e.preventDefault();
+                  const form = new FormData(e.target);
+                  sendKub("/api/vote", {
+                        voterId: form.get("voterId"),
+                        ranking: form.getAll("ranking")
+                  });
+            });
+
+            document.getElementById("closeForm").addEventListener("submit", (e) => {
+                  e.preventDefault();
+                  const form = new FormData(e.target);
+                  sendKub("/api/close", {
+                        officerId: form.get("officerId")
+                  });
+            });
+
+            document.querySelectorAll("[data-group]").forEach((btn) => {
+                  btn.addEventListener("click", () => {
+                        sendKub(`/api/groups/${encodeURIComponent(btn.dataset.group)}/decide`, {
+                              decision: btn.dataset.decision
+                        });
+                  });
+            });
+      </script>
+</body>
+</html>
